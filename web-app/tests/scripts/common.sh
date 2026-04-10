@@ -11,6 +11,8 @@
 # # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+export MC_UPDATE=off
+
 add_alias() {
   for i in $(seq 1 4); do
     echo "... attempting to add alias $i"
@@ -62,7 +64,6 @@ create_users() {
   mc admin user add minio dashboard-$TIMESTAMP dashboard
   mc admin user add minio diagnostics-$TIMESTAMP diagnostics
   mc admin user add minio groups-$TIMESTAMP groups1234
-  mc admin user add minio heal-$TIMESTAMP heal1234
   mc admin user add minio iampolicies-$TIMESTAMP iampolicies
   mc admin user add minio logs-$TIMESTAMP logs1234
   mc admin user add minio notificationendpoints-$TIMESTAMP notificationendpoints
@@ -87,7 +88,7 @@ create_users() {
 create_buckets() {
   mc mb minio/testcafe && mc cp ./web-app/tests/uploads/test.txt minio/testcafe/write/test.txt
   mc mb minio/test && mc cp ./web-app/tests/uploads/test.txt minio/test/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/test/digitalinsights/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/test/digitalinsights/test.txt
-  mc mb minio/testcondition && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/test.txt && mc cp ./web-app/tests2/uploads/test.txt minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt
+  mc mb minio/testcondition && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/xref_cust_guid_actd-v1.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/test.txt && mc cp ./web-app/tests/uploads/test.txt minio/testcondition/firstlevel/secondlevel/thirdlevel/test.txt
 }
 
 assign_policies() {
@@ -101,7 +102,6 @@ assign_policies() {
   mc admin policy attach minio dashboard-$TIMESTAMP --user dashboard-$TIMESTAMP
   mc admin policy attach minio diagnostics-$TIMESTAMP --user diagnostics-$TIMESTAMP
   mc admin policy attach minio groups-$TIMESTAMP --user groups-$TIMESTAMP
-  mc admin policy attach minio heal-$TIMESTAMP --user heal-$TIMESTAMP
   mc admin policy attach minio iampolicies-$TIMESTAMP --user iampolicies-$TIMESTAMP
   mc admin policy attach minio logs-$TIMESTAMP --user logs-$TIMESTAMP
   mc admin policy attach minio notificationendpoints-$TIMESTAMP --user notificationendpoints-$TIMESTAMP

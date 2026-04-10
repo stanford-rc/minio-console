@@ -22,7 +22,6 @@ remove_users() {
   mc admin user remove minio dashboard-"$TIMESTAMP"
   mc admin user remove minio diagnostics-"$TIMESTAMP"
   mc admin user remove minio groups-"$TIMESTAMP"
-  mc admin user remove minio heal-"$TIMESTAMP"
   mc admin user remove minio iampolicies-"$TIMESTAMP"
   mc admin user remove minio logs-"$TIMESTAMP"
   mc admin user remove minio notificationendpoints-"$TIMESTAMP"
@@ -49,7 +48,6 @@ remove_policies() {
   mc admin policy remove minio dashboard-"$TIMESTAMP"
   mc admin policy remove minio diagnostics-"$TIMESTAMP"
   mc admin policy remove minio groups-"$TIMESTAMP"
-  mc admin policy remove minio heal-"$TIMESTAMP"
   mc admin policy remove minio iampolicies-"$TIMESTAMP"
   mc admin policy remove minio logs-"$TIMESTAMP"
   mc admin policy remove minio notificationendpoints-"$TIMESTAMP"
@@ -63,10 +61,10 @@ remove_policies() {
   mc admin policy remove minio inspect-not-allowed-"$TIMESTAMP"
   mc admin policy remove minio fix-prefix-policy-ui-crash-"$TIMESTAMP"
   mc admin policy remove minio delete-object-with-prefix-"$TIMESTAMP"
-  mc admin policy remove conditions-policy-"$TIMESTAMP"
-  mc admin policy remove conditions-policy-2-"$TIMESTAMP"
-  mc admin policy remove conditions-policy-3-"$TIMESTAMP"
-  mc admin policy remove conditions-policy-4-"$TIMESTAMP"
+  mc admin policy remove minio conditions-policy-"$TIMESTAMP"
+  mc admin policy remove minio conditions-policy-2-"$TIMESTAMP"
+  mc admin policy remove minio conditions-policy-3-"$TIMESTAMP"
+  mc admin policy remove minio conditions-policy-4-"$TIMESTAMP"
 }
 
 remove_buckets() {
@@ -86,6 +84,7 @@ __init__() {
   echo "$TIMESTAMP" >web-app/tests/constants/timestamp.txt
   export GOPATH=/tmp/gopath
   export PATH=${PATH}:${GOPATH}/bin
+  export MC_UPDATE=off
 
   go install github.com/minio/mc@latest
 
@@ -100,8 +99,10 @@ __init__() {
 main() {
   (yarn start &>/dev/null) &
   (./console server &>/dev/null) &
+  CONSOLE_PID=$!
   (testcafe "firefox:headless" "$1" -q --skip-js-errors -c 3)
   cleanup
+  kill -15 $CONSOLE_PID
 }
 
 (__init__ "$@" && main "$@")

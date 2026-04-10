@@ -212,6 +212,8 @@ const BrowserBreadcrumbs = ({
       dispatch(setVersionsModeEnabled({ status: false, objectName: "" }));
     } else {
       if (splitPaths.length === 0) {
+        navigate("/browser");
+
         return;
       }
 

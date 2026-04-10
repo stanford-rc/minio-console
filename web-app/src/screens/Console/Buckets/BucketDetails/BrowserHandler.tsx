@@ -27,6 +27,7 @@ import {
   setLoadingObjectInfo,
   setLoadingVersioning,
   setLoadingVersions,
+  setLockingEnabled,
   setObjectDetailsView,
   setRequestInProgress,
   setSelectedObjectView,
@@ -56,6 +57,9 @@ const BrowserHandler = () => {
   );
   const requestInProgress = useSelector(
     (state: AppState) => state.objectBrowser.requestInProgress,
+  );
+  const loadingLocking = useSelector(
+    (state: AppState) => state.objectBrowser.loadingLocking,
   );
   const reloadObjectsList = useSelector(
     (state: AppState) => state.objectBrowser.reloadObjectsList,
@@ -204,6 +208,29 @@ const BrowserHandler = () => {
     displayListObjects,
     anonymousMode,
   ]);
+
+  useEffect(() => {
+    if (loadingLocking) {
+      if (displayListObjects) {
+        api.buckets
+          .getBucketObjectLockingStatus(bucketName)
+          .then((res) => {
+            dispatch(setLockingEnabled(res.data.object_locking_enabled));
+            dispatch(setLoadingLocking(false));
+          })
+          .catch((err) => {
+            console.error(
+              "Error Getting Object Locking Status: ",
+              err.error.detailedMessage,
+            );
+            dispatch(setLoadingLocking(false));
+          });
+      } else {
+        dispatch(resetMessages());
+        dispatch(setLoadingLocking(false));
+      }
+    }
+  }, [bucketName, loadingLocking, dispatch, displayListObjects]);
 
   return (
     <Fragment>

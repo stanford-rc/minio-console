@@ -16,22 +16,34 @@
 
 import React, { Suspense } from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
+import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import LoadingComponent from "../../../common/LoadingComponent";
 import NotFoundPage from "../../NotFoundPage";
-import OBBrowserMain from "./OBBrowserMain";
+import OBBucketList from "./OBBucketList";
 
 const BrowserHandler = React.lazy(
   () => import("../Buckets/BucketDetails/BrowserHandler"),
+);
+const AddBucket = React.lazy(
+  () => import("../Buckets/ListBuckets/AddBucket/AddBucket"),
 );
 
 const ObjectBrowser = () => {
   return (
     <Routes>
       <Route
+        path={IAM_PAGES.ADD_BUCKETS}
+        element={
+          <Suspense fallback={<LoadingComponent />}>
+            <AddBucket />
+          </Suspense>
+        }
+      />
+      <Route
         path="/"
         element={
           <Suspense fallback={<LoadingComponent />}>
-            <OBBrowserMain />
+            <OBBucketList />
           </Suspense>
         }
       />

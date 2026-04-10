@@ -21,24 +21,32 @@ import { doLoginAsync, getFetchConfigurationAsync } from "./loginThunks";
 interface LoginState {
   accessKey: string;
   secretKey: string;
-  backgroundAnimation: boolean;
+  sts: string;
+  useSTS: boolean;
   loginStrategy: LoginDetails;
   loginSending: boolean;
   loadingFetchConfiguration: boolean;
+  isK8S: boolean;
   navigateTo: string;
+  ssoEmbeddedIDPDisplay: boolean;
+  ldap_enabled: boolean;
 }
 
 const initialState: LoginState = {
   accessKey: "",
   secretKey: "",
+  sts: "",
+  useSTS: false,
   loginStrategy: {
     loginStrategy: undefined,
     redirectRules: [],
   },
   loginSending: false,
   loadingFetchConfiguration: true,
-  backgroundAnimation: false,
+  isK8S: false,
   navigateTo: "",
+  ssoEmbeddedIDPDisplay: false,
+  ldap_enabled: false,
 };
 
 const loginSlice = createSlice({
@@ -51,8 +59,17 @@ const loginSlice = createSlice({
     setSecretKey: (state, action: PayloadAction<string>) => {
       state.secretKey = action.payload;
     },
+    setUseSTS: (state, action: PayloadAction<boolean>) => {
+      state.useSTS = action.payload;
+    },
+    setSTS: (state, action: PayloadAction<string>) => {
+      state.sts = action.payload;
+    },
     setNavigateTo: (state, action: PayloadAction<string>) => {
       state.navigateTo = action.payload;
+    },
+    setDisplayEmbeddedIDPForms: (state, action: PayloadAction<boolean>) => {
+      state.ssoEmbeddedIDPDisplay = action.payload;
     },
     resetForm: (state) => initialState,
   },
@@ -68,7 +85,8 @@ const loginSlice = createSlice({
         state.loadingFetchConfiguration = false;
         if (action.payload) {
           state.loginStrategy = action.payload;
-          state.backgroundAnimation = !!action.payload.animatedLogin;
+          state.isK8S = !!action.payload.isK8S;
+          state.ldap_enabled = !!action.payload.ldap_enabled;
         }
       })
       .addCase(doLoginAsync.pending, (state, action) => {
@@ -84,7 +102,14 @@ const loginSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setAccessKey, setSecretKey, setNavigateTo, resetForm } =
-  loginSlice.actions;
+export const {
+  setAccessKey,
+  setSecretKey,
+  setUseSTS,
+  setSTS,
+  setNavigateTo,
+  setDisplayEmbeddedIDPForms,
+  resetForm,
+} = loginSlice.actions;
 
 export default loginSlice.reducer;

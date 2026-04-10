@@ -1,6 +1,6 @@
 [Unit]
-Description=MinIO Console
-Documentation=https://docs.min.io/community/minio-object-store/index.html
+Description=Console UI for MinIO
+Documentation=https://github.com/georgmangold/console
 Wants=network-online.target
 After=network-online.target
 AssertFileIsExecutable=/usr/local/bin/console
@@ -11,7 +11,7 @@ WorkingDirectory=/usr/local/
 User=console-user
 Group=console-user
 
-EnvironmentFile=/etc/default/minio-console
+EnvironmentFile=/etc/default/console
 
 ExecStart=/usr/local/bin/console server $CONSOLE_OPTS
 

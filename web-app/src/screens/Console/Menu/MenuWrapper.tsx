@@ -14,20 +14,28 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import React, { Fragment } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
-import { AddIcon, DocumentationIcon, LicenseIcon, Menu, MenuItem } from "mds";
+import {
+  Box,
+  DocumentationIcon,
+  LicenseIcon,
+  Menu,
+  MenuDivider,
+  MenuItem,
+} from "mds";
 import { AppState, useAppDispatch } from "../../../store";
+import { validRoutes } from "../valid-routes";
 import { menuOpen } from "../../../systemSlice";
+import { selFeatures } from "../consoleSlice";
 import { getLogoApplicationVariant, getLogoVar } from "../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
-import { setAddBucketOpen } from "../Buckets/ListBuckets/AddBucket/addBucketsSlice";
-import BucketsListing from "./Listing/BucketsListing";
-import { getLicenseConsent } from "../License/utils";
+import UserMenu from "./UserMenu";
 
 const MenuWrapper = () => {
   const dispatch = useAppDispatch();
+  const features = useSelector(selFeatures);
   const navigate = useNavigate();
   const { pathname = "" } = useLocation();
 
@@ -35,10 +43,13 @@ const MenuWrapper = () => {
     (state: AppState) => state.system.sidebarOpen,
   );
 
+  const allowedMenuItems = validRoutes(features);
+
   return (
     <Menu
       isOpen={sidebarOpen}
       displayGroupTitles
+      options={allowedMenuItems}
       applicationLogo={{
         applicationName: getLogoApplicationVariant(),
         subVariant: getLogoVar(),
@@ -55,33 +66,31 @@ const MenuWrapper = () => {
       currentPath={pathname}
       mobileModeAuto={false}
       endComponent={
-        <Fragment>
+        <Box
+          sx={{
+            display: "block",
+            marginTop: "20px",
+          }}
+        >
+          <MenuDivider />
           <MenuItem
-            name={"Documentation"}
+            name={"MinIO Documentation"}
             icon={<DocumentationIcon />}
-            path={
-              "https://docs.min.io/community/minio-object-store/index.html?ref=con"
-            }
+            path={"https://docs.min.io/community/minio-object-store/index.html"}
+            visibleTooltip={!sidebarOpen}
+            id="menu-documentation"
           />
           <MenuItem
             name={"License"}
             icon={<LicenseIcon />}
             path={IAM_PAGES.LICENSE}
             onClick={() => navigate(IAM_PAGES.LICENSE)}
-            badge={!getLicenseConsent()}
+            visibleTooltip={!sidebarOpen}
+            id="menu-license"
           />
-        </Fragment>
+        </Box>
       }
-      middleComponent={
-        <>
-          <MenuItem
-            name={"Create Bucket"}
-            icon={<AddIcon />}
-            onClick={() => dispatch(setAddBucketOpen(true))}
-          />
-          <BucketsListing />
-        </>
-      }
+      middleComponent={<UserMenu />}
     />
   );
 };

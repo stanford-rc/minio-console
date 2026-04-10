@@ -21,17 +21,35 @@ import { Bucket } from "../../../../api/consoleApi";
 
 interface IBucketListItem {
   bucket: Bucket;
+  sidebarOpen: boolean;
+  currentPath: string;
 }
 
-const BucketListItem = ({ bucket }: IBucketListItem) => {
+const BucketListItem = ({
+  bucket,
+  sidebarOpen,
+  currentPath,
+}: IBucketListItem) => {
   const navigate = useNavigate();
+
+  const path = `/browser/${bucket.name}`;
+  let selected = false;
+
+  if (currentPath && path) {
+    if (currentPath.endsWith(path)) {
+      selected = true;
+    }
+  }
 
   return (
     <MenuItem
       name={bucket.name}
       icon={<BucketsIcon />}
-      onClick={() => navigate(`/browser/${bucket.name}`)}
+      onClick={() => navigate(path)}
       id={`manageBucket-${bucket.name}`}
+      visibleTooltip={!sidebarOpen}
+      path={path}
+      selected={selected}
     />
   );
 };

@@ -25,6 +25,8 @@ import (
 	"github.com/minio/console/pkg/utils"
 
 	"github.com/minio/console/models"
+	"github.com/minio/console/pkg/auth/idp/oauth2"
+	"github.com/minio/console/pkg/auth/ldap"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -110,12 +112,18 @@ func Test_getListOfEnabledFeatures(t *testing.T) {
 					Hm:                 true,
 				},
 			},
-			want: []string{"hide-menu"},
+			want: []string{"log-search", "oidc-idp", "external-idp", "ldap-idp", "external-idp", "hide-menu"},
 			preFunc: func() {
 				os.Setenv(ConsoleLogQueryURL, "http://logsearchapi:8080")
+				os.Setenv(oauth2.ConsoleIDPURL, "http://external-idp.com")
+				os.Setenv(oauth2.ConsoleIDPClientID, "eaeaeaeaeaea")
+				os.Setenv(ldap.ConsoleLDAPEnabled, "on")
 			},
 			postFunc: func() {
 				os.Unsetenv(ConsoleLogQueryURL)
+				os.Unsetenv(oauth2.ConsoleIDPURL)
+				os.Unsetenv(oauth2.ConsoleIDPClientID)
+				os.Unsetenv(ldap.ConsoleLDAPEnabled)
 			},
 		},
 	}
@@ -124,7 +132,7 @@ func Test_getListOfEnabledFeatures(t *testing.T) {
 			if tt.preFunc != nil {
 				tt.preFunc()
 			}
-			assert.Equalf(t, tt.want, getListOfEnabledFeatures(tt.args.session), "getListOfEnabledFeatures(%v)", tt.args.session)
+			assert.Equalf(t, tt.want, getListOfEnabledFeatures(context.Background(), nil, tt.args.session), "getListOfEnabledFeatures(%v)", tt.args.session)
 			if tt.postFunc != nil {
 				tt.postFunc()
 			}

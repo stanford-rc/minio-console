@@ -31,13 +31,15 @@ export const deleteButton = Selector("button:enabled").withExactText("Delete");
 export const addEventDestination = Selector("button:enabled").withText(
   "Add Event Destination",
 );
+export const createTierButton =
+  Selector("button:enabled").withText("Create Tier");
 export const createUserButton =
   Selector("button:enabled").withText("Create User");
 export const createGroupButton =
   Selector("button:enabled").withText("Create Group");
 export const addAccessRuleButton =
   Selector("button:enabled").withText("Add Access Rule");
-export const startDiagnosticButton = Selector("button:disabled").withText(
+export const startDiagnosticButton = Selector("#start-new-diagnostic").withText(
   "Start Health Report",
 );
 export const startNewDiagnosticButton = Selector("#start-new-diagnostic");
@@ -80,7 +82,6 @@ export const usersAccessKeyInput = Selector("#accesskey-input");
 export const usersSecretKeyInput = Selector("#standard-multiline-static");
 export const groupNameInput = Selector("#group-name");
 export const searchResourceInput = Selector("#search-resource");
-export const filterBuckets = Selector("#filter-buckets");
 export const filterUserInput = searchResourceInput.withAttribute(
   "placeholder",
   "Filter Users",
@@ -208,10 +209,3 @@ export const locationEmpty = Selector("div").withAttribute(
 // Login Window
 //----------------------------------------------------
 export const loginButton = Selector("button").withAttribute("id", "do-login");
-//----------------------------------------------------
-// Ackwnowledge Button
-//----------------------------------------------------
-export const acknowledgeButton = Selector("button").withAttribute(
-  "id",
-  "acknowledge-confirm",
-);

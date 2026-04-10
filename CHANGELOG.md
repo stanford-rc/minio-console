@@ -1,64 +1,94 @@
 # Changelog
 
-## Release v2.0.4
+## Release v1.9.1
 
 Bug Fix:
 
-- Updated some project dependencies for vulnerabilities
-- Updated doc links to new MinIO docs site
-- Fixed an issue with object download in Download preview page
+- Updated project dependencies
+- Updated go version from 1.24.10 to 1.24.11 to fix Security vulnerability
 
-Changes:
+## Release v1.9.0
 
-- Improved Versions mode experience
+Breaking Change:
 
+- ODIC: `CONSOLE_IDP_CALLBACK` and `MINIO_BROWSER_REDIRECT_URL` now expect the Console URL without `/oauth_callback` at the end
 
-## Release v2.0.3
+Features:
 
-Changes:
-
-- Improved Privacy Policy User Experience
-
-
-## Release v2.0.2
-
-Bug Fix:
-
-- Updated project dependencies for vulnerabilities
-- Fixed buckets search box positioning during sidebar closed state
-
-Changes:
-
-- Added Privacy Policy to the License modal box
-
-
-## Release v2.0.1
+- Supports Prometheus basic auth
+- ReadOnly and disabled feature for CodeEditor, SpeedtestResult Json
+- Adds View to see Health Info Report Results as JSON Preview
+- New SSO URL `/sso` for auto redirect to OIDC Provider
+- Shows and option to load more than 20 versions
+- Login page shows an indicator that LDAP is enabled
+- Use Quota Size field instead of the deprecated Quota field
+- Console container now runs rootless as user 1000:1000
+- Show console package version on license page
 
 Bug Fix:
 
-- Updated project dependencies for vulnerabilities
+- Some OIDC confussion around ROLE_POLICY vs. ROLE_ARN
+- Fix download option in file preview
+- Set goreleaser bindir for linux packages to /usr/local/bin
+- Fix tag retrieval in ObjectDetailPanel component
+- Fix metrics display for objects sizes between 1024B and 1MB
 
-Changes:
+Additional Changes:
 
-- Updated Object Browser console logos
-- Updated License page information
+- Alot of dependencies updates
 
+## Release v1.8.1
 
+Release focuses on debranding by dropping **MinIO®** from names and logos
 
-## Release v2.0.0
-
-Community version is going back to be an object browser only.
-
-Bug Fix:
-
-- Fixed Dependencies vulnerabilities
+Features:
+- OIDC SSO Login support see [docs](./docs/OIDC.md)
+- Self-Update of binarys over Github Releases with `./console update`
 
 Deprecations:
+- Deprecates CONSOLE_ANIMATED_LOGIN animated Login video background 
+- Deprecates Inclusion of sourcemaps in Prod Releases of Web-App
 
-- Deprecated support of accounts & policies management, this can be managed by using mc admin commands. Please refer to the [MinIO User Management page](https://docs.min.io/community/minio-object-store/administration/identity-access-management/minio-user-management.html#id1) for more information.
-- Deprecated support of bucket management, this can be managed by using mc commands. Please refer to the [MinIO Client](https://docs.min.io/community/minio-object-store/reference/minio-mc.html) for more information.
-- Deprecated support of configuration management, this can be managed by using mc admin config commands. Please refer to the [MinIO Client](https://docs.min.io/community/minio-object-store/reference/minio-mc.html) for more information.
+Build:
+- web-app frontend build size 28 MB down to 9 MB
+- reduced binary size ~60 MB to ~45 MB
 
+Pictures see releases 
+
+## Release v1.8.0
+
+This release is bringing back long-deprecated features:
+
+- Undeprecated Lifecyle and Tierung UI (minio#3470)
+- Undeprecated Site Replication in UI (minio#3469)
+- Unremoved Tools support (minio#3467)
+    - Health Info
+    - Speedtest
+    - Profiling
+    - Inspect
+    - Trace
+    - Watch
+- Removed Subnet, Registration, Call Home Support again after Revert
+- Small License and Login Page updated
+
+## Release v1.7.8
+
+Bug Fix:
+
+- Fixed Dependencies vulnerabilities + updated Dependencies
+- Allow console to recognize s3.Delete*
+- Fix regex pattern in webhook management
+- Fix golangci-lint issues 
+- Decreased Browser direct download threshold to 5GiB
+
+## Release v1.7.7
+
+There are actually no changes compared to v1.7.6; I'm just getting the release and builds ready.
+- Binary Releases
+- Packages
+- Container Builds
+
+See Releases
 
 ## Release v1.7.6
 

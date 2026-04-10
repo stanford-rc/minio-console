@@ -188,7 +188,10 @@ const HelpMenu = () => {
       )}
       {helpItems &&
         helpItems.map((aHelpItem, idx) => (
-          <Box className={"helpItemBlock"} key={`help-item-${aHelpItem}`}>
+          <Box
+            className={"helpItemBlock"}
+            key={`help-item-${aHelpItem.title.toLowerCase().replace(" ", "-")}`}
+          >
             <HelpItem item={aHelpItem} displayImage={false} />
           </Box>
         ))}
@@ -196,7 +199,7 @@ const HelpMenu = () => {
         <MoreLink
           LeadingIcon={MinIOTierIcon}
           text={"Visit MinIO Documentation"}
-          link={"https://docs.min.io/?ref=con"}
+          link={"https://docs.min.io/"}
           color={"#C5293F"}
         />
       </div>
@@ -214,7 +217,10 @@ const HelpMenu = () => {
       )}
       {helpItemsVideo &&
         helpItemsVideo.map((aHelpItem, idx) => (
-          <Box className={"helpItemBlock"} key={`help-item-${aHelpItem}`}>
+          <Box
+            className={"helpItemBlock"}
+            key={`help-item-${aHelpItem.title.toLowerCase().replace(" ", "-")}`}
+          >
             <HelpItem item={aHelpItem} />
           </Box>
         ))}
@@ -240,7 +246,10 @@ const HelpMenu = () => {
       )}
       {helpItemsBlog &&
         helpItemsBlog.map((aHelpItem, idx) => (
-          <Box className={"helpItemBlock"} key={`help-item-${aHelpItem}`}>
+          <Box
+            className={"helpItemBlock"}
+            key={`help-item-${aHelpItem.title.toLowerCase().replace(" ", "-")}`}
+          >
             <HelpItem item={aHelpItem} />
           </Box>
         ))}
@@ -248,7 +257,7 @@ const HelpMenu = () => {
         <MoreLink
           LeadingIcon={MinIOTierIcon}
           text={"Visit MinIO Blog"}
-          link={"https://blog.min.io/?ref=con"}
+          link={"https://blog.min.io/"}
           color={"#C5293F"}
         />
       </div>

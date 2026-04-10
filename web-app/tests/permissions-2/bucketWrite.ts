@@ -17,10 +17,37 @@
 import * as roles from "../utils/roles";
 import * as elements from "../utils/elements";
 import * as functions from "../utils/functions";
+import { bucketsElement } from "../utils/elements-menu";
 import { testBucketBrowseButtonFor } from "../utils/functions";
-import { acknowledgeButton } from "../utils/elements";
+import { Selector } from "testcafe";
+import * as constants from "../utils/constants";
 
 fixture("For user with Bucket Write permissions").page("http://localhost:9090");
+
+test("Buckets sidebar item exists", async (t) => {
+  const bucketsExist = bucketsElement.with({ boundTestRun: t }).exists;
+  await t.useRole(roles.bucketWrite).expect(bucketsExist).ok();
+});
+
+test
+  .before(async (t) => {
+    // Create a bucket
+    await functions.setUpBucket(t, "bucketwritew");
+  })("Bucket access is set to W", async (t) => {
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    await t
+      .useRole(roles.bucketWrite)
+      .navigateTo("http://localhost:9090/buckets")
+      .expect(
+        Selector(`#access-${constants.TEST_BUCKET_NAME}-bucketwritew`)
+          .innerText,
+      )
+      .eql("Access: W");
+  })
+  .after(async (t) => {
+    // Cleanup created bucket and corresponding uploads
+    await functions.cleanUpBucketAndUploads(t, "bucketwritew");
+  });
 
 test
   .before(async (t) => {
@@ -31,8 +58,7 @@ test
     const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite2");
     await t
       .useRole(roles.bucketWrite)
-      .click(acknowledgeButton)
-      .typeText(elements.filterBuckets, "bucketwrite2")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButton)
       .expect(uploadExists)
       .ok();
@@ -47,11 +73,11 @@ test
     // Create a bucket
     await functions.setUpBucket(t, "bucketwrite3");
   })("Object can be uploaded to a bucket", async (t) => {
+    const testBucketBrowseButton = testBucketBrowseButtonFor("bucketwrite3");
     await t
       .useRole(roles.bucketWrite)
-      .click(acknowledgeButton)
-      .typeText(elements.filterBuckets, "bucketwrite3")
-      .click(testBucketBrowseButtonFor("bucketwrite3"))
+      .navigateTo("http://localhost:9090/browser")
+      .click(testBucketBrowseButton)
       // Upload object to bucket
       .setFilesToUpload(elements.uploadInput, "../uploads/test.txt");
   })
@@ -67,8 +93,7 @@ test
   })("Object list table is disabled", async (t) => {
     await t
       .useRole(roles.bucketWrite)
-      .click(acknowledgeButton)
-      .typeText(elements.filterBuckets, "bucketwrite4")
+      .navigateTo("http://localhost:9090/browser")
       .click(testBucketBrowseButtonFor("bucketwrite4"))
       .expect(elements.bucketsTableDisabled.exists)
       .ok();

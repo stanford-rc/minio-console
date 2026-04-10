@@ -84,12 +84,14 @@ import {
   openList,
   resetMessages,
   resetRewind,
+  setAnonymousAccessOpen,
   setDownloadRenameModal,
   setLoadingVersions,
   setNewObject,
   setObjectDetailsView,
   setPreviewOpen,
   setReloadObjectsList,
+  setRetentionConfig,
   setSelectedObjects,
   setSelectedObjectView,
   setSelectedPreview,
@@ -119,6 +121,7 @@ import RenameLongFileName from "../../../../ObjectBrowser/RenameLongFilename";
 import TooltipWrapper from "../../../../Common/TooltipWrapper/TooltipWrapper";
 import ListObjectsTable from "./ListObjectsTable";
 import FilterObjectsSB from "../../../../ObjectBrowser/FilterObjectsSB";
+import AddAccessRule from "../../../BucketDetails/AddAccessRule";
 import { sanitizeFilePath } from "./utils";
 
 const DeleteMultipleObjects = withSuspense(
@@ -184,6 +187,9 @@ const ListObjects = () => {
   const versioningConfig = useSelector(
     (state: AppState) => state.objectBrowser.versionInfo,
   );
+  const lockingEnabled = useSelector(
+    (state: AppState) => state.objectBrowser.lockingEnabled,
+  );
   const downloadRenameModal = useSelector(
     (state: AppState) => state.objectBrowser.downloadRenameModal,
   );
@@ -196,8 +202,14 @@ const ListObjects = () => {
   const previewOpen = useSelector(
     (state: AppState) => state.objectBrowser.previewOpen,
   );
+  const selectedBucket = useSelector(
+    (state: AppState) => state.objectBrowser.selectedBucket,
+  );
   const anonymousMode = useSelector(
     (state: AppState) => state.system.anonymousMode,
+  );
+  const anonymousAccessOpen = useSelector(
+    (state: AppState) => state.objectBrowser.anonymousAccessOpen,
   );
 
   const records = useSelector(
@@ -429,6 +441,21 @@ const ListObjects = () => {
         });
     }
   }, [bucketName, loadingBucket, dispatch, anonymousMode, requestInProgress]);
+
+  // Load retention Config
+
+  useEffect(() => {
+    if (selectedBucket !== "") {
+      api.buckets
+        .getBucketRetentionConfig(selectedBucket)
+        .then((res) => {
+          dispatch(setRetentionConfig(res.data));
+        })
+        .catch(() => {
+          dispatch(setRetentionConfig(null));
+        });
+    }
+  }, [selectedBucket, dispatch]);
 
   const closeDeleteMultipleModalAndRefresh = (refresh: boolean) => {
     setDeleteMultipleOpen(false);
@@ -810,6 +837,10 @@ const ListObjects = () => {
     dispatch(setDownloadRenameModal(null));
   };
 
+  const closeAddAccessRule = () => {
+    dispatch(setAnonymousAccessOpen(false));
+  };
+
   let createdTime = DateTime.now();
 
   if (bucketInfo?.creation_date) {
@@ -943,6 +974,14 @@ const ListObjects = () => {
             version_id: downloadRenameModal.version_id,
             size: downloadRenameModal.size,
           }}
+        />
+      )}
+      {anonymousAccessOpen && (
+        <AddAccessRule
+          onClose={closeAddAccessRule}
+          bucket={bucketName}
+          modalOpen={anonymousAccessOpen}
+          prefilledRoute={`${selectedObjects[0]}*`}
         />
       )}
 
@@ -1232,6 +1271,7 @@ const ListObjects = () => {
                       bucketName={bucketName}
                       onClosePanel={onClosePanel}
                       versioningInfo={versioningConfig}
+                      locking={lockingEnabled}
                     />
                   )}
                 </DetailsListPanel>

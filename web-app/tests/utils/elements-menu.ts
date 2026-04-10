@@ -33,6 +33,31 @@ export const getSubmenuBlock = (item) => {
 //----------------------------------------------------
 export const logoutItem = getMenuElement("sign-out");
 
+//----------------------------------------------------
+// Specific sidebar elements
+//----------------------------------------------------
+export const monitoringElement = getMenuElement("monitoring");
+export const monitoringChildren = getSubmenuBlock("monitoring");
+
+export const toolsElement = getMenuElement("tools");
+export const toolsChildren = getSubmenuBlock("tools");
+
+export const dashboardElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorMetrics");
+export const logsElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorLogs");
+export const traceElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorTrace");
+export const drivesElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorDrives");
+export const watchElement = monitoringChildren
+  .find("button")
+  .withAttribute("id", "monitorWatch");
+
 export const bucketsElement = getMenuElement("buckets");
 
 export const serviceAcctsElement = getMenuElement("nav-accesskeys");
@@ -53,28 +78,16 @@ export const configurationsElement = getMenuElement("configurations");
 
 export const notificationEndpointsElement = getMenuElement("lambda");
 
-export const inspectElement = getMenuElement("inspectObjects");
+export const tiersElement = getMenuElement("tiers");
 
-export const licenseElement = getMenuElement("license");
+export const diagnosticsElement = toolsChildren
+  .find("button")
+  .withAttribute("id", "diagnostics");
+export const performanceElement = toolsChildren
+  .find("button")
+  .withAttribute("id", "performance");
+export const inspectElement = toolsChildren
+  .find("button")
+  .withAttribute("id", "inspectObjects");
 
-//----------------------------------------------------
-// Specific sidebar elements
-//----------------------------------------------------
-export const monitoringElement = getMenuElement("tools");
-export const monitoringChildren = getSubmenuBlock("tools");
-
-export const dashboardElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorMetrics");
-export const logsElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorLogs");
-export const traceElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorTrace");
-export const drivesElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorDrives");
-export const watchElement = monitoringChildren
-  .find("button")
-  .withAttribute("id", "monitorWatch");
+export const licenseElement = getMenuElement("menu-license");

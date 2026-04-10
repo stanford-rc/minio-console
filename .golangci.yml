@@ -41,7 +41,7 @@ linters:
         - go-require
     revive:
       rules:
-        - name: "var-naming"
+        - name: var-naming # does not like package names utils and types..
           disabled: true
   exclusions:
     generated: lax

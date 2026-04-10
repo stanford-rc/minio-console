@@ -227,6 +227,11 @@ func GetSecureSTSPreload() bool {
 	return strings.ToLower(env.Get(ConsoleSecureSTSPreload, "off")) == "on"
 }
 
+// If TLSTemporaryRedirect is true, the a 302 will be used while redirecting. Default is false (301).
+func GetSecureTLSTemporaryRedirect() bool {
+	return strings.ToLower(env.Get(ConsoleSecureTLSTemporaryRedirect, "off")) == "on"
+}
+
 // STS header is only included when the connection is HTTPS.
 func GetSecureForceSTSHeader() bool {
 	return strings.ToLower(env.Get(ConsoleSecureForceSTSHeader, "off")) == "on"
@@ -247,6 +252,36 @@ func getLogSearchAPIToken() string {
 		return v
 	}
 	return env.Get(LogSearchQueryAuthToken, "")
+}
+
+func getLogSearchURL() string {
+	return env.Get(ConsoleLogQueryURL, "")
+}
+
+func getPrometheusURL() string {
+	return env.Get(PrometheusURL, "")
+}
+
+func getPrometheusAuthToken() string {
+	return env.Get(PrometheusAuthToken, "")
+}
+
+func getPrometheusAuthUserPass() (string, string, bool) {
+	username := env.Get(PrometheusAuthUsername, "")
+	password := env.Get(PrometheusAuthPassword, "")
+	if username == "" && password == "" {
+		return "", "", false
+	}
+
+	return username, password, true
+}
+
+func getPrometheusJobID() string {
+	return env.Get(PrometheusJobID, "minio-job")
+}
+
+func getPrometheusExtraLabels() string {
+	return env.Get(PrometheusExtraLabels, "")
 }
 
 func getMaxConcurrentUploadsLimit() int64 {
@@ -271,10 +306,35 @@ func getConsoleDevMode() bool {
 	return strings.ToLower(env.Get(ConsoleDevMode, "off")) == "on"
 }
 
-func getConsoleAnimatedLogin() bool {
-	return strings.ToLower(env.Get(ConsoleAnimatedLogin, "on")) == "on"
-}
-
 func getConsoleBrowserRedirectURL() string {
 	return env.Get(ConsoleBrowserRedirectURL, "")
+}
+
+func BuildOpenIDConsoleConfig() oauth2.OpenIDPCfg {
+	pcfg := map[string]oauth2.ProviderConfig{}
+
+	url := env.Get(ConsoleIDPURL, env.Get(MinioIdentifyOpenIDConfigURL, ""))
+	clientID := env.Get(ConsoleIDPClientID, env.Get(MinioIdentifyOpenIDClientID, ""))
+	clientSecret := env.Get(ConsoleIDPSecret, env.Get(MinioIdentifyOpenIDClientSecret, ""))
+	redirectCallback := env.Get(ConsoleIDPCallbackURL, env.Get(MinioBrowserRedirectURL, ""))
+
+	// Only set config if url, clientID, clientSecret and redirectCallback are provided
+	if url != "" && clientID != "" && clientSecret != "" && redirectCallback != "" {
+		pcfg = map[string]oauth2.ProviderConfig{
+			"OIDC": {
+				URL:                     url,
+				ClientID:                clientID,
+				ClientSecret:            clientSecret,
+				RedirectCallback:        redirectCallback + "/oauth_callback",
+				DisplayName:             env.Get(ConsoleIDPDisplayName, env.Get(MinioIdentifyOpenIDDisplayName, "")),
+				Scopes:                  env.Get(ConsoleIDPScopes, env.Get(MinioIdentifyOpenIDScopes, "openid,profile,email")),
+				Userinfo:                env.Get(ConsoleIDPUserInfo, env.Get(MinioIdentifyOpenIDClaimUserinfo, "")) == "on",
+				RedirectCallbackDynamic: env.Get(ConsoleIDPCallbackURLDynamic, env.Get(MinioIdentifyOpenIDRedirectURIDynamic, "")) == "on",
+				RoleArn:                 env.Get(ConsoleIDPRoleArn, ""),
+				EndSessionEndpoint:      env.Get(ConsoleIDPEndSessionEndpoint, ""),
+			},
+		}
+	}
+
+	return pcfg
 }

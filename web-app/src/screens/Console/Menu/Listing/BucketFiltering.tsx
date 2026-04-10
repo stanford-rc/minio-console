@@ -46,13 +46,14 @@ const BucketFiltering = () => {
           icon={<SearchIcon />}
           onClick={expandSearchBox}
           id={`filter-buckets-expand`}
+          visibleTooltip={!sidebarOpen}
         />
       ) : null}
       <Box
         sx={{
           opacity: sidebarOpen ? 1 : 0,
           height: sidebarOpen ? "inherit" : "0",
-          padding: `5px 15px`,
+          padding: `0px 0px 0px 20px`,
           "& .startOverlayIcon svg": {
             fill: `${get(theme, "menu.vertical.textColor", "#FFF")}!important`,
           },

@@ -53,10 +53,6 @@ const Login = () => {
   );
   const navigateTo = useSelector((state: AppState) => state.login.navigateTo);
 
-  const backgroundAnimation = useSelector(
-    (state: AppState) => state.login.backgroundAnimation,
-  );
-
   useEffect(() => {
     if (navigateTo !== "") {
       dispatch(resetForm());
@@ -73,6 +69,7 @@ const Login = () => {
   let loginComponent;
 
   switch (loginStrategy.loginStrategy) {
+    case loginStrategyType.redirect:
     case loginStrategyType.form: {
       let redirectItems: RedirectRule[] = [];
 
@@ -131,8 +128,7 @@ const Login = () => {
       );
   }
 
-  let docsURL =
-    "https://docs.min.io/community/minio-object-store/index.html?ref=con";
+  let docsURL = "https://docs.min.io/community/minio-object-store/index.html";
 
   useEffect(() => {
     dispatch(setHelpName("login"));
@@ -158,11 +154,11 @@ const Login = () => {
             }}
           >
             <a href={docsURL} target="_blank" rel="noopener">
-              Documentation
+              MinIO Documentation
             </a>
             <span className={"separator"}>|</span>
             <a
-              href="https://github.com/minio/minio"
+              href="https://github.com/georgmangold/console"
               target="_blank"
               rel="noopener"
             >
@@ -170,15 +166,7 @@ const Login = () => {
             </a>
             <span className={"separator"}>|</span>
             <a
-              href="https://subnet.min.io/?ref=con"
-              target="_blank"
-              rel="noopener"
-            >
-              Support
-            </a>
-            <span className={"separator"}>|</span>
-            <a
-              href="https://min.io/download/?ref=con"
+              href="https://github.com/georgmangold/console/releases"
               target="_blank"
               rel="noopener"
             >
@@ -187,22 +175,29 @@ const Login = () => {
           </Box>
         }
         promoHeader={
-          <span style={{ fontSize: 28 }}>High-Performance Object Store</span>
+          <span
+            style={{
+              fontSize: "clamp(6px, 6vw, 115px)",
+              lineHeight: 1,
+              display: "inline-block",
+              width: "100%",
+            }}
+          >
+            Welcome to<br></br>
+            <span style={{ fontSize: "clamp(6px, 8vw, 200px)" }}>CONSOLE</span>
+          </span>
         }
         promoInfo={
           <span style={{ fontSize: 14, lineHeight: 1 }}>
-            MinIO is a cloud-native object store built to run on any
-            infrastructure - public, private or edge clouds. Primary use cases
-            include data lakes, databases, AI/ML, SaaS applications and fast
-            backup & recovery. MinIO is dual licensed under GNU AGPL v3 and
-            commercial license. To learn more, visit{" "}
-            <a href={"https://min.io/?ref=con"} target="_blank" rel="noopener">
-              www.min.io
-            </a>
-            .
+            This is just a fork of the MinIO Console for my own personal
+            educational purposes, and therefore it incorporates MinIO® source
+            code. You may also want to look for other maintained forks.
+            <br></br>
+            It is important to note that <strong>MINIO</strong> is a registered
+            trademark of the MinIO Corporation. Consequently, this project is
+            not affiliated with or endorsed by the MinIO Corporation.
           </span>
         }
-        backgroundAnimation={backgroundAnimation}
       />
     </Fragment>
   );

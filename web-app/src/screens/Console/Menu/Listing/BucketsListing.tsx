@@ -15,7 +15,7 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import React, { Fragment, useEffect, useState } from "react";
-import { Box, BucketsIcon, HelpBox, MenuDivider, MenuSectionHeader } from "mds";
+import { Box, BucketsIcon, HelpBox } from "mds";
 import { AppState, useAppDispatch } from "../../../../store";
 import { Bucket } from "../../../../api/consoleApi";
 import { api } from "../../../../api";
@@ -30,10 +30,12 @@ import get from "lodash/get";
 import { useTheme } from "styled-components";
 import BucketFiltering from "./BucketFiltering";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 
 const ListBuckets = () => {
   const dispatch = useAppDispatch();
   const theme = useTheme();
+  const { pathname = "" } = useLocation();
 
   const filterBuckets = useSelector(
     (state: AppState) => state.system.filterBucketList,
@@ -76,7 +78,13 @@ const ListBuckets = () => {
   const renderItemLine = (index: number) => {
     const bucket = filteredRecords[index] || null;
     if (bucket) {
-      return <BucketListItem bucket={bucket} />;
+      return (
+        <BucketListItem
+          bucket={bucket}
+          sidebarOpen={sidebarOpen}
+          currentPath={pathname}
+        />
+      );
     }
     return null;
   };
@@ -89,7 +97,7 @@ const ListBuckets = () => {
             sx={{
               display: "block",
               "& .menuHeader": {
-                marginTop: 10,
+                marginTop: 5,
               },
               "& .labelContainer": {
                 textAlign: "left",
@@ -99,24 +107,25 @@ const ListBuckets = () => {
                 flexGrow: 1,
                 width: 150,
               },
+              marginBottom: 0,
             }}
           >
-            <BucketFiltering />
-            <MenuSectionHeader label={"Buckets"} />
+            {records.length !== 0 && <BucketFiltering />}
             {filteredRecords.length > 0 && (
               <Box
                 sx={{
-                  display: "block",
-                  height: "calc(100vh - 380px)",
-                  "& .bucketsListing": {
+                  display: "flex",
+                  maxHeight: sidebarOpen ? "40vh" : "60vh",
+                  "div[role=list]": {
                     "&::-webkit-scrollbar": {
-                      width: 5,
+                      width: sidebarOpen ? "5px" : "2px",
                     },
                     "&::-webkit-scrollbar-thumb": {
-                      backgroundColor: get(theme, "bulletColor", "#2781B0"),
+                      backgroundColor: get(theme, "boxBackground", "#2781B0"),
                     },
                     "&::-webkit-scrollbar-thumb:hover": {
-                      backgroundColor: "#fff",
+                      backgroundColor: get(theme, "borderColor", "#fff"),
+                      cursor: "all-scroll",
                     },
                   },
                 }}
@@ -137,22 +146,18 @@ const ListBuckets = () => {
                       backgroundColor: "transparent",
                       color: get(theme, "menu.vertical.textColor", "#FFF"),
                       border: 0,
+                      fontSize: 14,
                     },
                   }}
                 >
                   <HelpBox
                     iconComponent={<BucketsIcon />}
-                    title={"No Results"}
-                    help={
-                      <Box sx={{ textAlign: "center" }}>
-                        No buckets match the filtering condition
-                      </Box>
-                    }
+                    title={"No buckets match the filtering condition"}
+                    help={""}
                   />
                 </Box>
               )}
           </Box>
-          <MenuDivider />
         </Fragment>
       )}
     </Fragment>
