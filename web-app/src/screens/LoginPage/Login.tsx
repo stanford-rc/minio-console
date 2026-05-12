@@ -177,26 +177,48 @@ const Login = () => {
         promoHeader={
           <span
             style={{
-              fontSize: "clamp(6px, 6vw, 115px)",
+              fontSize: "clamp(6px, 4vw, 56px)",
               lineHeight: 1,
               display: "inline-block",
               width: "100%",
             }}
           >
-            Welcome to<br></br>
-            <span style={{ fontSize: "clamp(6px, 8vw, 200px)" }}>CONSOLE</span>
+            Welcome to<br />
+            <span style={{ fontSize: "clamp(6px, 10vw, 96px)" }}>Elm</span>
           </span>
         }
         promoInfo={
-          <span style={{ fontSize: 14, lineHeight: 1 }}>
-            This is just a fork of the MinIO Console for my own personal
-            educational purposes, and therefore it incorporates MinIO® source
-            code. You may also want to look for other maintained forks.
-            <br></br>
-            It is important to note that <strong>MINIO</strong> is a registered
-            trademark of the MinIO Corporation. Consequently, this project is
-            not affiliated with or endorsed by the MinIO Corporation.
-          </span>
+        <>
+          <p style={{ marginTop: 0 }}>
+            Welcome to the MinIO management console for <strong>Elm</strong>, the
+            object storage service provided by{" "}
+            <strong>Stanford Research Computing</strong>.
+          </p>
+          <p style={{ marginTop: "0.5em", marginBottom: "0.5em" }}>
+            This user interface is a customized version of the open-source MinIO
+            Console. Our build is based on the community-maintained{" "}
+            <a
+              href="https://github.com/georgmangold/console"
+              target="_blank"
+              rel="noopener noreferrer"
+            >georgmangold/console</a>{" "}
+            fork and is tailored to support the needs of the Stanford research
+            community.
+          </p>
+          <p style={{ marginTop: "0.5em", marginBottom: "0.5em" }}>
+            For assistance or any questions regarding your storage, please contact
+            us at{" "}
+            <a href="mailto:srcc-stanford@stanford.edu">
+              srcc-stanford@stanford.edu
+            </a>
+            .
+          </p>
+          <p style={{ fontSize: "0.8em", opacity: 0.8, marginTop: "10px", marginBottom: 0 }}>
+            This service utilizes MinIO software. MinIO® is a registered trademark of
+            MinIO, Inc. This customized console is provided by Stanford Research
+            Computing and is not affiliated with or endorsed by MinIO, Inc.
+          </p>
+        </>
         }
       />
     </Fragment>
