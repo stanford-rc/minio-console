@@ -183,8 +183,7 @@ const Login = () => {
               width: "100%",
             }}
           >
-            Welcome to<br />
-            <span style={{ fontSize: "clamp(6px, 10vw, 96px)" }}>Elm</span>
+            Welcome to Elm
           </span>
         }
         promoInfo={
@@ -216,7 +215,13 @@ const Login = () => {
           <p style={{ fontSize: "0.8em", opacity: 0.8, marginTop: "10px", marginBottom: 0 }}>
             This service utilizes MinIO software. MinIO® is a registered trademark of
             MinIO, Inc. This customized console is provided by Stanford Research
-            Computing and is not affiliated with or endorsed by MinIO, Inc.
+            Computing and is not affiliated with or endorsed by MinIO, Inc. The source
+            code for our modified MinIO server is available at{" "}
+            <a
+              href="https://github.com/stanford-rc/elm-minio"
+              target="_blank"
+              rel="noopener noreferrer"
+            >github.com/stanford-rc/elm-minio</a>.
           </p>
         </>
         }
