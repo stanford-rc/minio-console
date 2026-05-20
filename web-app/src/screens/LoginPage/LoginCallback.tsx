@@ -21,6 +21,7 @@ import api from "../../common/api";
 import { baseUrl } from "../../history";
 import { Box, Button, LoginWrapper, WarnIcon } from "mds";
 import { getLogoApplicationVariant, getLogoVar } from "../../config";
+import { promoHeader, promoInfo } from "./promoContent";
 import get from "lodash/get";
 
 const CallBackContainer = styled.div(({ theme }) => ({
@@ -134,30 +135,8 @@ const LoginCallback = () => {
             </Button>
           </CallBackContainer>
         }
-        promoHeader={
-          <span
-            style={{
-              fontSize: "clamp(6px, 6vw, 115px)",
-              lineHeight: 1,
-              display: "inline-block",
-              width: "100%",
-            }}
-          >
-            Welcome to<br></br>
-            <span style={{ fontSize: "clamp(6px, 8vw, 200px)" }}>CONSOLE</span>
-          </span>
-        }
-        promoInfo={
-          <span style={{ fontSize: 14, lineHeight: 1 }}>
-            This is just a fork of the MinIO Console for my own personal
-            educational purposes, and therefore it incorporates MinIO® source
-            code. You may also want to look for other maintained forks.
-            <br></br>
-            It is important to note that <strong>MINIO</strong> is a registered
-            trademark of the MinIO Corporation. Consequently, this project is
-            not affiliated with or endorsed by the MinIO Corporation.
-          </span>
-        }
+        promoHeader={promoHeader}
+        promoInfo={promoInfo}
       />
     </Fragment>
   ) : null;
