@@ -21,7 +21,7 @@ import api from "../../common/api";
 import { baseUrl } from "../../history";
 import { Box, Button, LoginWrapper, WarnIcon } from "mds";
 import { getLogoApplicationVariant, getLogoVar } from "../../config";
-import { promoHeader, promoInfo } from "./promoContent";
+import { PromoHeader, PromoInfo } from "./promoContent";
 import get from "lodash/get";
 
 const CallBackContainer = styled.div(({ theme }) => ({
@@ -135,8 +135,8 @@ const LoginCallback = () => {
             </Button>
           </CallBackContainer>
         }
-        promoHeader={promoHeader}
-        promoInfo={promoInfo}
+        promoHeader={PromoHeader}
+        promoInfo={PromoInfo}
       />
     </Fragment>
   ) : null;

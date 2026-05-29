@@ -28,7 +28,7 @@ import { getLogoApplicationVariant, getLogoVar } from "../../config";
 import { RedirectRule } from "api/consoleApi";
 import { redirectRules } from "./login.utils";
 import { setHelpName } from "../../systemSlice";
-import { promoHeader, promoInfo } from "./promoContent";
+import { PromoHeader, PromoInfo } from "./promoContent";
 
 export const getTargetPath = () => {
   let targetPath = "/browser";
@@ -175,8 +175,8 @@ const Login = () => {
             </a>
           </Box>
         }
-        promoHeader={promoHeader}
-        promoInfo={promoInfo}
+        promoHeader={PromoHeader}
+        promoInfo={PromoInfo}
       />
     </Fragment>
   );

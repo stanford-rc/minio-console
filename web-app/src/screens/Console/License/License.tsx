@@ -14,6 +14,8 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import { PromoLicense } from "../../LoginPage/promoContent";
+
 import React, { Fragment } from "react";
 import {
   AGPLV3DarkLogo,
@@ -30,150 +32,53 @@ import { version } from "version";
 const License = () => {
   return (
     <Fragment>
-      <PageHeaderWrapper label={"License"} />
+      <PageHeaderWrapper label={"License & About"} />
       <PageLayout>
         <Grid item xs={12}>
-          <HelpBox
-            title={"License"}
-            iconComponent={<LicenseIcon />}
-            help={
-              <Fragment>
-                <p>
-                  This is just a fork of the{" "}
-                  <a
-                    href="https://github.com/minio/object-browser"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    MinIO Console
-                  </a>{" "}
-                  for my own personal educational purposes, and therefore it
-                  incorporates MinIO® source code. You may also want to look for
-                  other maintained{" "}
-                  <a
-                    href="https://github.com/minio/object-browser/forks"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    forks
-                  </a>
-                  .
-                </p>
-                <p>
-                  It is important to note that <strong>MINIO</strong> is a
-                  registered trademark of the MinIO Corporation. Consequently,
-                  this project is not affiliated with or endorsed by the MinIO
-                  Corporation.
-                </p>
-              </Fragment>
-            }
-          />
           <Box
             sx={{
               display: "flex",
               flexFlow: "column",
-              "& .link-text": {
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              "& a": {
                 color: "#2781B0",
                 fontWeight: 600,
               },
-              alignItems: "center",
-              justifyContent: "center",
             }}
           >
-            <Box
-              sx={{
-                marginTop: "30px",
-                marginBottom: "30px",
-                width: "350px",
-              }}
-            >
-              <ApplicationLogo applicationName="console" subVariant="AGPL" />
-            </Box>
-            <Box
-              sx={{
-                marginBottom: "30px",
-                fontSize: "30px",
-              }}
-            >
+            <Box sx={{ my: "30px", fontSize: "30px" }}>
               Version: v{version}
             </Box>
-            <Box
-              sx={{
-                marginBottom: "10px",
-              }}
-            >
-              Source code:{" "}
-              <a
-                href="https://github.com/georgmangold/console"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                https://github.com/georgmangold/console
-              </a>
-            </Box>
-            <Box
-              sx={{
-                marginBottom: "20px",
-              }}
-            >
-              Console is licensed under the GNU Affero General Public License
-              (AGPL) Version 3.0.
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                marginBottom: "20px",
-                justifyContent: "center",
-                "& .min-icon": {
-                  fill: "blue",
-                  width: "188px",
-                  height: "62px",
-                },
-              }}
-            >
-              <AGPLV3DarkLogo />
+
+            <Box sx={{ maxWidth: "800px", px: 2 }}>
+              <PromoLicense />
             </Box>
 
-            <Box
-              sx={{
-                paddingBottom: "30px",
-              }}
-            >
-              For more information, please refer to the license at{" "}
+            <Box sx={{ my: "30px", borderTop: '1px solid #ddd', width: '80%', pt: '30px' }}>
+              <p>
+                This software is licensed under the GNU Affero General Public License
+                (AGPL) Version 3.0.
+              </p>
               <a
                 href="https://www.gnu.org/licenses/agpl-3.0.en.html"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                https://www.gnu.org/licenses/agpl-3.0.en.html
+                <AGPLV3DarkLogo />
               </a>
-              .
-            </Box>
-            <Box
-              sx={{
-                marginBottom: "27px",
-              }}
-            >
-              This software incorporates MinIO® source code which is also
-              licensed under the GNU AGPL v3, for which, the full text can be
-              found here:{" "}
-              <a
-                href={`https://www.gnu.org/licenses/agpl-3.0.html`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={"link-text"}
-              >
-                https://www.gnu.org/licenses/agpl-3.0.html.
-              </a>
-            </Box>
-            <Box
-              sx={{
-                paddingBottom: "23px",
-              }}
-            >
-              <strong>MINIO</strong> is a registered trademark of the MinIO
-              Corporation.
+              <p style={{ marginTop: '1em' }}>
+                For more information, please refer to the full license text at{" "}
+                <a
+                  href="https://www.gnu.org/licenses/agpl-3.0.en.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  www.gnu.org/licenses
+                </a>
+                .
+              </p>
             </Box>
           </Box>
         </Grid>
