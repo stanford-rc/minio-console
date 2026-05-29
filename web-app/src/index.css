@@ -24,3 +24,18 @@ input.removeArrows[type="number"],
 .removeArrows input[type="number"] {
   -moz-appearance: textfield;
 }
+
+/* Force the main container to stretch instead of locking at screen height */
+div[class*="mainContainer"] {
+  height: auto !important;
+  min-height: 100vh !important;
+}
+
+/* Force the promo container back into the layout flow so it pushes the background down */
+div[class*="promoContainer"] {
+  position: relative !important;
+  top: 0 !important;
+  left: 0 !important;
+  transform: none !important;
+  margin: 190px auto 40px auto !important;
+}
