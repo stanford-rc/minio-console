@@ -23,7 +23,6 @@ import {
   DownloadIcon,
   PreviewIcon,
   RecoverIcon,
-  ShareIcon,
   IconButton,
   Tooltip,
   Grid,
@@ -41,6 +40,9 @@ interface IFileVersionItem {
   checkable: boolean;
   isChecked: boolean;
   onCheck: (versionID: string) => void;
+  // Stanford RC: object sharing is disabled (the share link bypasses elm-proxy).
+  // The per-version Share button has been removed; this prop is retained for
+  // compatibility with the parent but is no longer used.
   onShare: (versionInfo: BucketObject) => void;
   onDownload: (versionInfo: BucketObject) => void;
   onRestore: (versionInfo: BucketObject) => void;
@@ -165,7 +167,6 @@ const FileVersionItem = ({
   checkable,
   isChecked,
   onCheck,
-  onShare,
   onDownload,
   onRestore,
   onPreview,
@@ -186,11 +187,6 @@ const FileVersionItem = ({
       icon: <DownloadIcon />,
       action: onDownload,
       tooltip: "Download this version",
-    },
-    {
-      icon: <ShareIcon />,
-      action: onShare,
-      tooltip: "Share this version",
     },
     {
       icon: <RecoverIcon />,

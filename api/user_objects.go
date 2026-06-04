@@ -32,8 +32,6 @@ import (
 
 	"github.com/minio/minio-go/v7"
 
-	"github.com/minio/console/pkg/utils"
-
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
 	"github.com/klauspost/compress/zip"
@@ -995,27 +993,15 @@ func uploadFiles(ctx context.Context, client MinioClient, params objectApi.PostB
 	return nil
 }
 
-// getShareObjectResponse returns a share object url
-func getShareObjectResponse(session *models.Principal, params objectApi.ShareObjectParams) (*string, *CodedAPIError) {
+// getShareObjectResponse previously returned a share object url. Stanford RC:
+// object sharing is disabled. The generated share link embeds a SigV4 presigned
+// URL pointing directly at the MinIO endpoint (:9000), which bypasses elm-proxy
+// entirely. Disabling at the handler closes the bypass regardless of the
+// frontend or hand-crafted requests. The helper getShareObjectURL is retained
+// (referenced by tests) but is no longer reachable in production.
+func getShareObjectResponse(_ *models.Principal, params objectApi.ShareObjectParams) (*string, *CodedAPIError) {
 	ctx := params.HTTPRequest.Context()
-	clientIP := utils.ClientIPFromContext(ctx)
-	s3Client, err := newS3BucketClient(session, params.BucketName, params.Prefix, clientIP)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-	// create a mc S3Client interface implementation
-	// defining the client to be used
-	mcClient := mcClient{client: s3Client}
-	var expireDuration string
-	if params.Expires != nil {
-		expireDuration = *params.Expires
-	}
-	url, err := getShareObjectURL(ctx, mcClient, params.HTTPRequest, params.VersionID, expireDuration)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err)
-	}
-
-	return url, nil
+	return nil, ErrorWithContext(ctx, ErrForbidden)
 }
 
 func getShareObjectURL(ctx context.Context, client MCClient, r *http.Request, versionID string, duration string) (*string, error) {

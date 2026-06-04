@@ -360,7 +360,6 @@ const ListObjects = () => {
   useEffect(() => {
     if (selectedObjects.length === 1) {
       const objectName = selectedObjects[0];
-      const isPrefix = objectName.endsWith("/");
 
       let objectType: AllowedPreviews = previewObjectType(metaData, objectName);
 
@@ -370,11 +369,10 @@ const ListObjects = () => {
         setCanPreviewFile(false);
       }
 
-      if (canDownload && !isPrefix) {
-        setCanShareFile(true);
-      } else {
-        setCanShareFile(false);
-      }
+      // Stanford RC: object sharing is disabled (the share link bypasses
+      // elm-proxy), so the Share action stays unavailable. The server-side
+      // handler also returns 403 as the authoritative enforcement point.
+      setCanShareFile(false);
     } else {
       setCanShareFile(false);
       setCanPreviewFile(false);

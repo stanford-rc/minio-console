@@ -388,14 +388,12 @@ const ObjectDetailPanel = ({
         shareObject();
       },
       label: "Share",
-      disabled: !!actualInfo.is_delete_marker || !canGetObject,
+      // Stanford RC: object sharing is disabled because the share link embeds a
+      // presigned URL that bypasses elm-proxy. The server-side handler returns
+      // 403; this keeps the action unavailable in the UI.
+      disabled: true,
       icon: <ShareIcon />,
-      tooltip: canGetObject
-        ? "Share this File"
-        : permissionTooltipHelper(
-            [IAM_SCOPES.S3_GET_OBJECT, IAM_SCOPES.S3_GET_ACTIONS],
-            "share this object",
-          ),
+      tooltip: "Sharing is disabled",
     },
     {
       action: () => {

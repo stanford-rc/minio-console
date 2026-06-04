@@ -1535,8 +1535,11 @@ func TestShareObjectOnURL(t *testing.T) {
 		args           args
 	}{
 		{
+			// Stanford RC: object sharing is disabled at the handler because the
+			// share link embeds a presigned URL that bypasses elm-proxy. The
+			// endpoint now returns 403 Forbidden instead of a share URL.
 			name:           "Share File with valid prefix",
-			expectedStatus: 200,
+			expectedStatus: 403,
 			args: args{
 				prefix: validPrefix,
 			},
