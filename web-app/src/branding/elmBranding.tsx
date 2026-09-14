@@ -21,8 +21,18 @@
 import React from "react";
 import { Box } from "mds";
 
-// Single source of truth for the Elm MinIO source repository link.
-export const ELM_MINIO_URL = "https://github.com/stanford-rc/elm-minio";
+// Single source of truth for the modified MinIO server's source link.
+//
+// This points at the fork itself, which is where the modifications are. The
+// build repository, elm-minio, is a checkout and a compile and no longer
+// carries any source changes of its own.
+export const MINIO_SOURCE_URL = "https://github.com/stanford-rc/minio";
+
+// The console is separately modified AGPL software that the user is
+// interacting with over the network, so it needs its own source offer rather
+// than being covered by the server's.
+export const CONSOLE_SOURCE_URL =
+  "https://github.com/stanford-rc/minio-console";
 
 const MINIO_DOCS_URL =
   "https://docs.min.io/community/minio-object-store/index.html";
@@ -53,11 +63,15 @@ export const PromoLicense = () => (
     MinIO, Inc. This customized console is provided by Stanford Research
     Computing and is not affiliated with or endorsed by MinIO, Inc. The source
     code for our modified MinIO server is available at{" "}
-    <a href={ELM_MINIO_URL} target="_blank" rel="noopener noreferrer">
-      github.com/stanford-rc/elm-minio
+    <a href={MINIO_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+      github.com/stanford-rc/minio
     </a>
-    . Our modifications are released under the GNU Affero General Public License
-    v3, the same license as MinIO itself.
+    , and the source code for this modified console at{" "}
+    <a href={CONSOLE_SOURCE_URL} target="_blank" rel="noopener noreferrer">
+      github.com/stanford-rc/minio-console
+    </a>
+    . Our modifications to both are released under the GNU Affero General Public
+    License v3, the same license as MinIO itself.
   </p>
 );
 
@@ -107,7 +121,7 @@ export const PromoFooter = () => (
       MinIO Documentation
     </a>
     <span className={"separator"}>|</span>
-    <a href={ELM_MINIO_URL} target="_blank" rel="noopener">
+    <a href={MINIO_SOURCE_URL} target="_blank" rel="noopener">
       GitHub
     </a>
   </Box>

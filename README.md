@@ -1,210 +1,61 @@
-# Console
+# stanford-rc/minio-console
 
-![Workflow](https://github.com/georgmangold/console/actions/workflows/jobs.yaml/badge.svg) ![license](https://img.shields.io/badge/license-AGPL%20V3-blue) ![binarydownloads](https://img.shields.io/github/downloads/georgmangold/console/total?label=GitHub%20Release%20Downloads) ![ghcr](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fghcr-badge.elias.eu.org%2Fapi%2Fgeorgmangold%2Fconsole%2Fconsole&query=downloadCount&logo=refinedgithub&label=ghcr.io%20Container%20Pulls&color=9E95B7)
+**This is a modified version of the MinIO Console.** It is not MinIO, Inc.
+software, it is not supported by MinIO, Inc., and it has not been reviewed or
+endorsed by them.
 
-Console is a graphical admin management browser user interface for [MinIO® Server](https://github.com/minio/minio)
+Modified by The Board of Trustees of the Leland Stanford Junior University,
+Stanford Research Computing, between **2026-04-09 and 2026-06-04**.
 
-> [!NOTE]
-> Console is a fork of the old [MinIO Console](https://github.com/minio/object-browser) for my own personal educational purposes, and therefore it incorporates MinIO® source code. You may also want to look for other maintained [forks](https://github.com/minio/object-browser/forks).
+This program is free software, released under the **GNU Affero General Public
+License version 3**, the same license as the works it derives from. See `LICENSE`
+for the full text and `NOTICE` for attribution. Copyright in the unmodified
+portions remains with MinIO, Inc., with Georg Mangold, and with the upstream
+contributors.
 
-> [!IMPORTANT]
->  **MINIO** is a registered trademark of the MinIO Corporation. Consequently, this project is not affiliated with or endorsed by the MinIO Corporation.
+MinIO(R) is a registered trademark of MinIO, Inc. It is used here only to
+identify the software this fork is derived from.
 
-| Login                                    | Metrics                                             | Object Browser                         |
-|------------------------------------------|-----------------------------------------------------|----------------------------------------|
-| ![Login](images/1_login.png)             | ![Metrics](images/2_metrics.png)                    | ![Object Browser](images/3_bucket.png) |
-| ![Performance](images/4_performance.png) | ![CommandInterface](images/5_command_interface.png) |                                        |
-| **Performance/ Speedtest**               | **<kbd>Ctrl</kbd>/<kbd>Strg</kbd> + <kbd>k</kbd>**  |                                        |
+## Provenance
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
-**Table of Contents**
+This fork has two ancestors, and both matter for attribution:
 
-- [Console](#console)
-  - [Install](#install)
-    - [Binary Releases](#binary-releases)
-    - [Docker](#docker)
-    - [Build from source](#build-from-source)
-  - [Setup](#setup)
-    - [1. Create a user `console` using `mc`](#1-create-a-user-console-using-mc)
-    - [2. Create a policy for `console` with admin access to all resources (for testing)](#2-create-a-policy-for-console-with-admin-access-to-all-resources-for-testing)
-    - [3. Set the policy for the new `console` user](#3-set-the-policy-for-the-new-console-user)
-  - [Start Console service:](#start-console-service)
-- [Documentation](#documentation)
-- [Contribute to Console Project](#contribute-to-console-project)
-- [License](#license)
+1. `github.com/minio/object-browser`, the original MinIO Console, which MinIO,
+   Inc. no longer develops in the open.
+2. `github.com/georgmangold/console`, a fork of that work maintained by Georg
+   Mangold. This repository is forked from it at release **v2.0.4**, upstream
+   commit `2017f33b2`, dated 2025-09-05.
 
-<!-- markdown-toc end -->
-## Install
+The Go module path was changed to `github.com/stanford-rc/minio-console` so that
+this fork cannot be confused with either ancestor in a build.
 
-### Binary Releases ![binarydownloads](https://img.shields.io/github/downloads/georgmangold/console/total)
-|   OS    |  ARCH   |                                                Binary                                                       |
-|:-------:|:-------:|:-----------------------------------------------------------------------------------------------------------:|
-|  Linux  |  amd64  |     [linux-amd64](https://github.com/georgmangold/console/releases/latest/download/console-linux-amd64)     |
-|  Linux  |  arm64  |     [linux-arm64](https://github.com/georgmangold/console/releases/latest/download/console-linux-arm64)     |
-|  Linux  |   arm   |       [linux-arm](https://github.com/georgmangold/console/releases/latest/download/console-linux-arm)       |
-|  Apple  |  amd64  |    [darwin-amd64](https://github.com/georgmangold/console/releases/latest/download/console-darwin-amd64)    |
-|  Apple  |  arm64  |    [darwin-amd64](https://github.com/georgmangold/console/releases/latest/download/console-darwin-arm64)    |
-| Windows |  amd64  | [windows-amd64](https://github.com/georgmangold/console/releases/latest/download/console-windows-amd64.exe) |
+## Why this fork exists
 
-For Checksums, DEB and RPM Packages visit latest [Release Page](https://github.com/georgmangold/console/releases/latest/).
+Stanford Research Computing serves this console to Elm users. The changes are
+presentation-level, so that a user can tell which service they are logged into
+and can reach the source for the modified server they are talking to.
 
-### Docker
-Pull the latest release via: [Github Packages](https://github.com/georgmangold/console/pkgs/container/console) ![ghcr](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fghcr-badge.elias.eu.org%2Fapi%2Fgeorgmangold%2Fconsole%2Fconsole&query=downloadCount&logo=refinedgithub&label=ghcr.io%20Container%20Pulls&color=9E95B7)
-```
-docker pull ghcr.io/georgmangold/console
-```
-Run it with and replace `YOUR_MINIO_SERVER_URL` with your own MinIO Server URL
-```
-docker run -p 127.0.0.1:9090:9090 -e CONSOLE_MINIO_SERVER=https://YOUR_MINIO_SERVER_URL ghcr.io/georgmangold/console
-```
-> [!NOTE]
-> If you have changed the region on your MinIO Server from the default `us-east-1` you need to set the Environment Variable `CONSOLE_MINIO_REGION=` as well.
+## What was changed
 
-### Build from source
-> [!NOTE]
-> You will need a working Go environment. Therefore, please follow [How to install Go](https://golang.org/doc/install).
-> Minimum version required is ![GitHub go.mod Go version](https://img.shields.io/github/go-mod/go-version/georgmangold/console)
+- the login page carries a Stanford Research Computing banner
+- the page header was reduced to a single line
+- a link to the `elm-minio` source was added
+- a stale orphaned screen was removed
+- front-end assets rebuilt to match
 
-```
-go install github.com/georgmangold/console/cmd/console@latest
-```
-Refer to [DEVELOPMENT.md](DEVELOPMENT.md) and [CONTRIBUTING.md](CONTRIBUTING.md) for more Information on how to build this project.
+`git log` is the authoritative list.
 
-## Setup
+## Source availability
 
-All `console` needs is a MinIO user with admin privileges and URL pointing to your MinIO deployment.
+The complete corresponding source for this modified version is this repository.
 
-> [!NOTE]
-> We don't recommend using MinIO's Root Admin Credentials
+## Upstream documentation
 
-### 1. Create a user `console` using `mc`
+This README replaces the one inherited from `georgmangold/console`, which carried
+that project's CI badges, release links and download counters. Those describe
+that project and not this fork, which is why they are gone rather than edited.
 
-```bash
-mc admin user add myminio/
-Enter Access Key: console
-Enter Secret Key: xxxxxxxx
-```
+For build and usage documentation, see the ancestors:
 
-### 2. Create a policy for `console` with admin access to all resources (for testing)
-
-```sh
-cat > admin.json << EOF
-{
-	"Version": "2012-10-17",
-	"Statement": [{
-			"Action": [
-				"admin:*"
-			],
-			"Effect": "Allow",
-			"Sid": ""
-		},
-		{
-			"Action": [
-                "s3:*"
-			],
-			"Effect": "Allow",
-			"Resource": [
-				"arn:aws:s3:::*"
-			],
-			"Sid": ""
-		}
-	]
-}
-EOF
-```
-
-```sh
-mc admin policy create myminio/ consoleAdmin admin.json
-```
-
-### 3. Set the policy for the new `console` user
-
-```sh
-mc admin policy attach myminio consoleAdmin --user=console
-```
-
-> [!NOTE]
-> Additionally, you can create policies to limit the privileges for other `console` users, for example, if you
-> want the user to only have access to dashboard, buckets, notifications and watch page, the policy should look like
-> this:
-> ```json
-> {
->   "Version": "2012-10-17",
->   "Statement": [
->     {
->       "Action": [
-> 	"admin:ServerInfo"
->       ],
->       "Effect": "Allow",
->       "Sid": ""
->     },
->     {
->       "Action": [
-> 	"s3:ListenBucketNotification",
-> 	"s3:PutBucketNotification",
-> 	"s3:GetBucketNotification",
-> 	"s3:ListMultipartUploadParts",
-> 	"s3:ListBucketMultipartUploads",
-> 	"s3:ListBucket",
-> 	"s3:HeadBucket",
-> 	"s3:GetObject",
-> 	"s3:GetBucketLocation",
-> 	"s3:AbortMultipartUpload",
-> 	"s3:CreateBucket",
-> 	"s3:PutObject",
-> 	"s3:DeleteObject",
-> 	"s3:DeleteBucket",
-> 	"s3:PutBucketPolicy",
-> 	"s3:DeleteBucketPolicy",
-> 	"s3:GetBucketPolicy"
->       ],
->       "Effect": "Allow",
->       "Resource": [
-> 	"arn:aws:s3:::*"
->       ],
->       "Sid": ""
->     }
->   ]
-> }
-> ```
-
-## Start Console service:
-
-Before running console service, following environment settings must be supplied
-
-```sh
-# MinIO Endpoint
-export CONSOLE_MINIO_SERVER=http://localhost:9000
-```
-
-Now start the console service.
-
-```
-./console server
-2021-01-19 02:36:08.893735 I | 2021/01/19 02:36:08 server.go:129: Serving console at http://localhost:9090
-```
-
-By default `console` runs on port `9090` this can be changed with `--port` of your choice.
-
-> [!NOTE]
-> If you have changed the region on your MinIO Server from the default `us-east-1` you need to set the Environment Variable `CONSOLE_MINIO_REGION=` as well.
-
-## Documentation
-
-See [documentation](docs/README.md) and [FAQ](docs/README.md#faq) for more information.
-
-## Contribute to console Project
-
-Please follow console [Contributor's Guide](./CONTRIBUTING.md)
-
-
-## License
-
-Console is licensed under the [GNU AGPLv3](LICENSE).
-
-## Star History
-<picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=georgmangold/console&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=georgmangold/console&type=date&legend=top-left" />
-   <img alt="Console Star History Chart" src="https://api.star-history.com/svg?repos=georgmangold/console&type=date&legend=top-left" />
- </picture>
+- https://github.com/georgmangold/console
+- https://github.com/minio/object-browser
