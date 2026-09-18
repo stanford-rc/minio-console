@@ -78,13 +78,9 @@ func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) (
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
 
-	var redirect string
-	state := params.Body.State
-	if state != "" {
-		var err error
-		if redirect, err = postLogoutRedirectURL(state); err != nil {
-			return "", ErrorWithContext(ctx, err)
-		}
+	redirect, err := postLogoutRedirectURL(params.Body.State)
+	if err != nil {
+		return "", ErrorWithContext(ctx, err)
 	}
 
 	creds := getConsoleCredentialsFromSession(session)
@@ -101,8 +97,19 @@ func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) (
 // both the Go and the TypeScript clients for a single string.
 const PostLogoutRedirectHeader = "X-Console-Post-Logout-Url"
 
-// postLogoutRedirectURL returns the provider's end-session URL for the login
-// state supplied by the client, or "" when the provider advertises none.
+// postLogoutRedirectURL returns the provider's end-session URL, or "" when no
+// provider is configured or the resolved one advertises no such endpoint.
+//
+// The login state is optional. It carries the IDPName chosen at login and is
+// written only by LoginCallback, which runs when the browser completes the
+// console's OWN OIDC round trip and lands on /oauth_callback. A deployment
+// that authenticates the user elsewhere and then logs them into the console
+// directly never visits that route, so localStorage holds no auth-state and
+// the provider has to be resolved from configuration instead.
+//
+// Treating an absent state as "nothing to do" is what made sign-out a silent
+// local-only logout for those deployments: no redirect, no error, and the
+// user left with a live IdP session.
 //
 // This replaces a back channel POST of client_id, client_secret and
 // refresh_token to that same URL, which required a 204 to consider the logout
@@ -116,6 +123,23 @@ const PostLogoutRedirectHeader = "X-Console-Post-Logout-Url"
 // no longer needed here, so a missing idp-refresh-token cookie stops being a
 // reason to fail the logout.
 func postLogoutRedirectURL(state string) (string, error) {
+	if state == "" {
+		// More than one provider is a genuine ambiguity: without the state
+		// there is nothing to say which session the user holds.
+		if n := len(GlobalMinIOConfig.OpenIDProviders); n > 1 {
+			return "", fmt.Errorf("no login state supplied and %d identity "+
+				"providers are configured, cannot determine which session to end", n)
+		}
+
+		// Exactly one provider needs no disambiguating. None at all means
+		// there is no IdP session to end, so "" is the right answer.
+		for _, providerCfg := range GlobalMinIOConfig.OpenIDProviders {
+			return providerCfg.EndSessionEndpoint, nil
+		}
+
+		return "", nil
+	}
+
 	decodedRState, err := base64.StdEncoding.DecodeString(state)
 	if err != nil {
 		return "", err
