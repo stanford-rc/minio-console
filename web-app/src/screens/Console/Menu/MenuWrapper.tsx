@@ -32,6 +32,7 @@ import { getLogoApplicationVariant, getLogoVar } from "../../../config";
 import { useLocation, useNavigate } from "react-router-dom";
 import { IAM_PAGES } from "../../../common/SecureComponent/permissions";
 import UserMenu from "./UserMenu";
+import { ELM_DOCS_URL } from "../../../branding/elmBranding";
 
 const MenuWrapper = () => {
   const dispatch = useAppDispatch();
@@ -74,9 +75,9 @@ const MenuWrapper = () => {
         >
           <MenuDivider />
           <MenuItem
-            name={"MinIO Documentation"}
+            name={"Elm Documentation"}
             icon={<DocumentationIcon />}
-            path={"https://docs.min.io/community/minio-object-store/index.html"}
+            path={ELM_DOCS_URL}
             visibleTooltip={!sidebarOpen}
             id="menu-documentation"
           />

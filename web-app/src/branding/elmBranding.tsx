@@ -34,8 +34,18 @@ export const MINIO_SOURCE_URL = "https://github.com/stanford-rc/minio";
 export const CONSOLE_SOURCE_URL =
   "https://github.com/stanford-rc/minio-console";
 
-const MINIO_DOCS_URL =
-  "https://docs.min.io/community/minio-object-store/index.html";
+// Documentation for the service the user is actually logging in to.
+//
+// This replaced a link to docs.min.io. MinIO folded the community object-store
+// docs into their commercial AIStor product, so both
+// docs.min.io/community/minio-object-store/index.html and the bare docs.min.io
+// now redirect to docs.min.io/aistor/, a landing page for software this is
+// not. Sending an Elm user there answers no question they have and implies
+// they are running AIStor.
+//
+// Exported because the console's help menu offers the same link and should
+// not carry its own copy of the URL.
+export const ELM_DOCS_URL = "https://docs.elm.stanford.edu/";
 
 export const PromoHeader = (
   <span
@@ -117,8 +127,8 @@ export const PromoFooter = () => (
       },
     }}
   >
-    <a href={MINIO_DOCS_URL} target="_blank" rel="noopener">
-      MinIO Documentation
+    <a href={ELM_DOCS_URL} target="_blank" rel="noopener">
+      Elm Documentation
     </a>
     <span className={"separator"}>|</span>
     <a href={MINIO_SOURCE_URL} target="_blank" rel="noopener">

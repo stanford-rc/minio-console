@@ -35,6 +35,7 @@ import { setHelpTabName } from "../../systemSlice";
 import { DocItem } from "./HelpMenu.types";
 import HelpItem from "./HelpItem";
 import MoreLink from "../../common/MoreLink";
+import { ELM_DOCS_URL } from "../../branding/elmBranding";
 
 const HelpMenuContainer = styled.div(({ theme }) => ({
   backgroundColor: get(theme, "bgColor", "#FFF"),
@@ -198,8 +199,8 @@ const HelpMenu = () => {
       <div style={{ padding: 16 }}>
         <MoreLink
           LeadingIcon={MinIOTierIcon}
-          text={"Visit MinIO Documentation"}
-          link={"https://docs.min.io/"}
+          text={"Visit Elm Documentation"}
+          link={ELM_DOCS_URL}
           color={"#C5293F"}
         />
       </div>
