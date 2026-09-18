@@ -31,6 +31,14 @@ fmt:
 crosscompile:
 	@(env bash $(PWD)/cross-compile.sh $(arg1))
 
+# verify builds, vets and unit-tests this repository on its own. It exists
+# because go.mod's module path and the tree's import paths deliberately
+# disagree, so a plain "go build ./..." cannot work here. See the header of
+# verify-standalone.sh for why that mismatch is required by the consumer.
+.PHONY: verify
+verify:
+	@(env bash $(PWD)/verify-standalone.sh)
+
 lint:
 	@echo "Running $@ check"
 	@GO111MODULE=on ${GOPATH}/bin/golangci-lint cache clean

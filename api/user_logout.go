@@ -22,10 +22,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/url"
 	"time"
-
-	"github.com/go-openapi/errors"
 
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/runtime/middleware"
@@ -38,7 +35,7 @@ import (
 func registerLogoutHandlers(api *operations.ConsoleAPI) {
 	// logout from console
 	api.AuthLogoutHandler = authApi.LogoutHandlerFunc(func(params authApi.LogoutParams, session *models.Principal) middleware.Responder {
-		err := getLogoutResponse(session, params)
+		redirect, err := getLogoutResponse(session, params)
 		if err != nil {
 			api.Logger("IDP logout failed: %v", err.APIError.DetailedMessage)
 		}
@@ -46,6 +43,9 @@ func registerLogoutHandlers(api *operations.ConsoleAPI) {
 		return middleware.ResponderFunc(func(w http.ResponseWriter, p runtime.Producer) {
 			if err != nil {
 				w.Header().Set("IDP-Logout", fmt.Sprintf("%v", err.APIError.DetailedMessage))
+			}
+			if redirect != "" {
+				w.Header().Set(PostLogoutRedirectHeader, redirect)
 			}
 			expiredCookie := ExpireSessionCookie()
 			// this will tell the browser to clear the cookie and invalidate user session
@@ -71,53 +71,65 @@ func logout(credentials ConsoleCredentialsI) {
 	credentials.Expire()
 }
 
-// getLogoutResponse performs logout() and returns nil or errors
-func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) *CodedAPIError {
+// getLogoutResponse performs logout() and returns the URL the browser should
+// be redirected to afterwards, which is empty when the provider advertises no
+// end-session endpoint, plus nil or errors.
+func getLogoutResponse(session *models.Principal, params authApi.LogoutParams) (string, *CodedAPIError) {
 	ctx, cancel := context.WithCancel(params.HTTPRequest.Context())
 	defer cancel()
+
+	var redirect string
 	state := params.Body.State
 	if state != "" {
-		if err := logoutFromIDPProvider(params.HTTPRequest, state); err != nil {
-			return ErrorWithContext(ctx, err)
+		var err error
+		if redirect, err = postLogoutRedirectURL(state); err != nil {
+			return "", ErrorWithContext(ctx, err)
 		}
 	}
+
 	creds := getConsoleCredentialsFromSession(session)
 	credentials := ConsoleCredentials{ConsoleCredentials: creds}
 	logout(credentials)
-	return nil
+
+	return redirect, nil
 }
 
-func logoutFromIDPProvider(r *http.Request, state string) error {
+// PostLogoutRedirectHeader carries the URL the browser should be sent to once
+// the console has finished logging out, so that the session is also ended at
+// the identity provider. It is a header rather than a response field because
+// the /logout response carries no schema, and adding one means regenerating
+// both the Go and the TypeScript clients for a single string.
+const PostLogoutRedirectHeader = "X-Console-Post-Logout-Url"
+
+// postLogoutRedirectURL returns the provider's end-session URL for the login
+// state supplied by the client, or "" when the provider advertises none.
+//
+// This replaces a back channel POST of client_id, client_secret and
+// refresh_token to that same URL, which required a 204 to consider the logout
+// successful. That was wrong on its own terms: OpenID Connect RP-Initiated
+// Logout defines end_session_endpoint as a URL the USER AGENT is sent to, not
+// a back channel. The POST therefore reached an endpoint that does not answer
+// it, failed every logout it was enabled for, and sent our client secret
+// somewhere that has no use for it.
+//
+// Returning the URL for the browser to follow also means the refresh token is
+// no longer needed here, so a missing idp-refresh-token cookie stops being a
+// reason to fail the logout.
+func postLogoutRedirectURL(state string) (string, error) {
 	decodedRState, err := base64.StdEncoding.DecodeString(state)
 	if err != nil {
-		return err
-	}
-	var requestItems oauth2.LoginURLParams
-	err = json.Unmarshal(decodedRState, &requestItems)
-	if err != nil {
-		return err
-	}
-	providerCfg := GlobalMinIOConfig.OpenIDProviders[requestItems.IDPName]
-	refreshToken, err := r.Cookie("idp-refresh-token")
-	if err != nil {
-		return err
-	}
-	if providerCfg.EndSessionEndpoint != "" {
-		params := url.Values{}
-		params.Add("client_id", providerCfg.ClientID)
-		params.Add("client_secret", providerCfg.ClientSecret)
-		params.Add("refresh_token", refreshToken.Value)
-		client := &http.Client{
-			Transport: GlobalTransport,
-		}
-		result, err := client.PostForm(providerCfg.EndSessionEndpoint, params)
-		if err != nil {
-			return errors.New(500, "failed to logout: %v", err.Error())
-		}
-		if result.StatusCode != 204 {
-			return errors.New(int32(result.StatusCode), "failed to logout")
-		}
+		return "", err
 	}
 
-	return nil
+	var requestItems oauth2.LoginURLParams
+	if err := json.Unmarshal(decodedRState, &requestItems); err != nil {
+		return "", err
+	}
+
+	providerCfg, ok := GlobalMinIOConfig.OpenIDProviders[requestItems.IDPName]
+	if !ok {
+		return "", fmt.Errorf("unrecognized identity provider %q", requestItems.IDPName)
+	}
+
+	return providerCfg.EndSessionEndpoint, nil
 }
